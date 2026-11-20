@@ -1,0 +1,32 @@
+services:
+  netfilter-fix:
+    image: alpine
+    command: sh -c "echo 0 > /proc/sys/net/bridge/bridge-nf-call-iptables; echo 0 > /proc/sys/net/bridge/bridge-nf-call-ip6tables; echo listo"
+    network_mode: host
+    privileged: true
+    restart: "no"
+
+  servidor-web:
+    build: ./servidor
+    networks: { lab: { ipv4_address: 172.20.0.10 } }
+
+  victima:
+    build: ./victima
+    networks: { lab: { ipv4_address: 172.20.0.20 } }
+
+  atacante:
+    build: ./atacante
+    cap_add: [NET_ADMIN, NET_RAW]
+    sysctls:
+      - net.ipv4.ip_forward=1
+      - net.ipv4.conf.all.route_localnet=1
+    tty: true
+    networks: { lab: { ipv4_address: 172.20.0.30 } }
+
+networks:
+  lab:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24

