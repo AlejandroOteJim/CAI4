@@ -1,5 +1,5 @@
 FROM debian:stable-slim
-RUN apt-get update && apt-get install -y bettercap iproute2 iptables dsniff tcpdump \
+RUN apt-get update && apt-get install -y bettercap iproute2 iptables dsniff tcpdump procps \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /caplets
 COPY caplets/ /caplets/

